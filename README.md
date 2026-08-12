@@ -48,6 +48,12 @@ Generated v2 data is deliberately ignored by Git; upload it to Drive or an
 artifact store, then copy its sealed manifest and labels into a new Colab run.
 See [ADR-008](docs/decisions/008-strict-devanagari-v2-data-contract.md).
 
+For the complete automated flow, open
+[`native_indic_g2p_v2_t4.ipynb`](native_indic_g2p_v2_t4.ipynb). It downloads a
+pinned CC0 IndicCorpV2 range, builds v2, validates its manifest, and trains on
+a T4. The 1.5 GB initial range is an estimate; the builder stops with a clear
+count if it produces fewer than one million accepted training words.
+
 ## Important boundary
 
 The neural data eligibility implementation currently allows any Unicode
