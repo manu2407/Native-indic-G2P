@@ -16,11 +16,16 @@ def sha256(path: Path) -> str:
     return hashlib.sha256(path.read_bytes()).hexdigest()
 
 
-def eligible(record: dict) -> bool:
+def eligible(record: dict, *, strict_devanagari: bool = False) -> bool:
     text = record["text"]
     target = record["ps"] + record["source_phoneme"]
-    return bool(text) and all(unicodedata.category(char)[0] in "LM" for char in text) and not (
+    return (
+        bool(text)
+        and all(unicodedata.category(char)[0] in "LM" for char in text)
+        and (not strict_devanagari or all("\u0900" <= char <= "\u097f" for char in text))
+        and not (
         set(target) & INVALID_TARGET_CHARACTERS
+        )
     )
 
 
@@ -34,14 +39,18 @@ def target(record: dict) -> str:
     return "".join(parts)
 
 
-def load_records(path: Path) -> list[dict]:
-    return [record for line in path.read_text(encoding="utf-8").splitlines() if eligible(record := json.loads(line))]
+def load_records(path: Path, *, strict_devanagari: bool = False) -> list[dict]:
+    return [
+        record
+        for line in path.read_text(encoding="utf-8").splitlines()
+        if eligible(record := json.loads(line), strict_devanagari=strict_devanagari)
+    ]
 
 
-def load_training(paths: list[Path]) -> list[dict]:
+def load_training(paths: list[Path], *, strict_devanagari: bool = False) -> list[dict]:
     unique: dict[str, dict] = {}
     for path in paths:
-        for record in load_records(path):
+        for record in load_records(path, strict_devanagari=strict_devanagari):
             previous = unique.get(record["text"])
             if previous and target(previous) != target(record):
                 raise ValueError(f"conflicting neural targets for {record['text']!r}")
@@ -76,7 +85,8 @@ def verify_manifest(path: Path) -> dict:
     for source, source_path in zip(manifest["training_sources"], training_paths):
         if sha256(source_path) != source["sha256"]:
             raise ValueError(f"training source hash mismatch: {source_path}")
-    training = load_training(training_paths)
+    strict_devanagari = manifest.get("strict_devanagari", False)
+    training = load_training(training_paths, strict_devanagari=strict_devanagari)
     if len(training) != manifest["training"]["records"] or word_hash(training) != manifest["training"]["words_sha256"]:
         raise ValueError("training partition does not match sealed manifest")
     training_words = {record["text"] for record in training}
@@ -85,7 +95,7 @@ def verify_manifest(path: Path) -> dict:
         source_path = root / source["path"]
         if sha256(source_path) != source["sha256"]:
             raise ValueError(f"{split} source hash mismatch: {source_path}")
-        records = load_records(source_path)
+        records = load_records(source_path, strict_devanagari=strict_devanagari)
         if len(records) != source["records"] or word_hash(records) != source["words_sha256"]:
             raise ValueError(f"{split} partition does not match sealed manifest")
         if training_words & {record["text"] for record in records}:

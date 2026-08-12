@@ -1,3 +1,7 @@
 __pycache__/
 *.py[cod]
 models/*.pt
+datasets/processed/
+datasets/tier_a/
+datasets/validation/*_split/
+datasets/validation/neural_*/

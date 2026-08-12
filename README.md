@@ -32,6 +32,22 @@ early stopping (`--patience 30`) keeps the best checkpoint automatically.
 See [EXPERIMENT.md](EXPERIMENT.md) for the fixed inputs and run-recording
 protocol.
 
+## Build a clean v2 dataset
+
+`build_hindi_g2p_v2.py` automates strict cleaning, word-disjoint splitting,
+compatibility labels, hashes, and the one-million accepted-training-word gate.
+It needs a licensed local Hindi corpus and the pinned upstream labeler:
+
+```bash
+git clone https://github.com/somnat/Hindi-word-prosody.git vendor/Hindi-word-prosody
+git -C vendor/Hindi-word-prosody checkout ac01da28ff2801a6a7e94829efbfe14b1c8179dd
+python build_hindi_g2p_v2.py CORPUS.txt --upstream vendor/Hindi-word-prosody
+```
+
+Generated v2 data is deliberately ignored by Git; upload it to Drive or an
+artifact store, then copy its sealed manifest and labels into a new Colab run.
+See [ADR-008](docs/decisions/008-strict-devanagari-v2-data-contract.md).
+
 ## Important boundary
 
 The neural data eligibility implementation currently allows any Unicode
