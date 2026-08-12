@@ -13,7 +13,8 @@ They are routing/data-quality cases, not native-Hindi G2P evidence.
 
 ## Decision
 
-Build v2 with strict Devanagari-only sentence and word filtering. The builder
+Build v2 with strict Devanagari-only sentence and word filtering. A valid word
+must begin with a Devanagari letter, rather than a combining mark. The builder
 records the clean, split, label, and neural-manifest provenance chain, uses a
 word-disjoint 90/5/5 split, and refuses to call a dataset complete unless it
 has one million accepted training words.

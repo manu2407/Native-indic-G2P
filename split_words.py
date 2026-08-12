@@ -28,8 +28,13 @@ def words(text: str) -> list[str]:
 
 
 def is_devanagari_word(word: str) -> bool:
-    return bool(word) and all(
-        "\u0900" <= char <= "\u097f" and unicodedata.category(char)[0] in "LM" for char in word
+    # A leading mark is valid Unicode but not a standalone Hindi word onset.
+    # Filtering it here prevents malformed OCR/web tokens from reaching Tier-A.
+    return (
+        bool(word)
+        and "\u0900" <= word[0] <= "\u097f"
+        and unicodedata.category(word[0])[0] == "L"
+        and all("\u0900" <= char <= "\u097f" and unicodedata.category(char)[0] in "LM" for char in word)
     )
 
 
