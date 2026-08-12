@@ -1,0 +1,48 @@
+{
+  "version": "neural-g2p-eval-v1",
+  "status": "sealed-before-neural-training",
+  "eligibility": "nonempty Devanagari letters/marks; target excludes X, 3, 4, ^, and ~",
+  "target": "one compact PS sequence with realized-stress apostrophes after syllable markers",
+  "training_sources": [
+    {
+      "path": "datasets/tier_a/hindi_g2p_pilot_v1/train/labels.jsonl",
+      "sha256": "3555e481cc38e5a1cd593305dcd068e09958a7e2952d8684f92f6bb6b7cf5329"
+    },
+    {
+      "path": "datasets/tier_a/hindi_g2p_expansion_v1_50k/train/labels.jsonl",
+      "sha256": "f26038f990dfee168c6c6ca6ef53d673bad49dff38878121374c73067248b2a2"
+    }
+  ],
+  "training": {
+    "records": 64676,
+    "words_sha256": "c35cac0116180970b9a543ace745b8b8513a8d813b83ae46d073080be85cdaf9"
+  },
+  "dev": {
+    "path": "datasets/tier_a/hindi_g2p_expansion_v1_50k/dev/labels.jsonl",
+    "sha256": "052d209ad516713c2b0c48c878a065693e794a63c73bf84da22d007ec415d1b3",
+    "records": 3357,
+    "words_sha256": "1afd2bd586666a174f4edbb341cfc573fe4d9c54cca4b4753e4ca3f10b5ae2d9",
+    "strata": {
+      "all": 3357,
+      "long": 318,
+      "conjunct": 1105,
+      "nasal": 704,
+      "nukta": 187,
+      "four_plus_syllables": 673
+    }
+  },
+  "blind": {
+    "path": "datasets/tier_a/hindi_g2p_expansion_v1_50k/blind/labels.jsonl",
+    "sha256": "5dc4cafe5b13a88c6b7e67b9209e926a25c2d916da507b4e77c644b9de1afe28",
+    "records": 3215,
+    "words_sha256": "d1aed1aa9431d352d9d36e50a87bc755cdaade3347d50bcd8ecd9e5aa7d1e415",
+    "strata": {
+      "all": 3215,
+      "long": 284,
+      "conjunct": 1048,
+      "nasal": 687,
+      "nukta": 180,
+      "four_plus_syllables": 625
+    }
+  }
+}
